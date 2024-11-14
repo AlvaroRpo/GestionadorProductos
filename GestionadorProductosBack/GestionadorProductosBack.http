@@ -1,0 +1,6 @@
+@GestionadorProductosBack_HostAddress = http://localhost:5172
+
+GET {{GestionadorProductosBack_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
