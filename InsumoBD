@@ -1,0 +1,81 @@
+USE MASTER
+GO
+CREATE DATABASE BDTienda
+GO
+USE BDTienda
+GO
+CREATE TABLE Productos
+(
+Id INT IDENTITY(1,1) PRIMARY KEY, 
+Nombre VARCHAR(40) NOT NULL, 
+Precio MONEY NOT NULL,
+Cantidad INT NOT NULL
+)
+GO
+CREATE PROCEDURE SP_RegistrarProducto
+@IN_Nombre VARCHAR(40),
+@IN_Precio MONEY,
+@IN_Cantidad INT
+AS
+BEGIN
+	
+	IF NOT EXISTS(SELECT Id FROM Productos WHERE Nombre = @IN_Nombre)
+	BEGIN
+		INSERT INTO Productos(Nombre, Precio,Cantidad)
+		VALUES(@IN_Nombre, @IN_Precio, @IN_Cantidad)
+
+		SELECT 1
+	END ELSE
+		SELECT 2
+
+END
+GO
+CREATE PROCEDURE SP_ModificarProducto
+@IN_Id INT,
+@IN_Nombre VARCHAR(40),
+@IN_Precio MONEY,
+@IN_Cantidad INT
+AS
+BEGIN
+	
+	IF NOT EXISTS(SELECT Id FROM Productos WHERE Nombre = @IN_Nombre AND Id != @IN_Id)
+	BEGIN
+		UPDATE Productos
+		SET Nombre = @IN_Nombre, Precio = @IN_Precio,Cantidad = @IN_Cantidad
+		WHERE Id = @IN_Id
+
+		SELECT 1
+	END ELSE
+		SELECT 2
+
+END
+GO
+CREATE PROCEDURE SP_ConsultarProducto
+@IN_Nombre VARCHAR(40)
+AS
+BEGIN
+	
+	SELECT Id, Nombre, Precio,Cantidad
+	FROM Productos
+	WHERE Nombre LIKE '%'+@IN_Nombre+'%'
+
+END
+GO
+CREATE PROCEDURE SP_ConsultarProductos
+AS
+BEGIN
+	
+	SELECT Id, Nombre, Precio,Cantidad
+	FROM Productos
+
+END
+GO
+CREATE PROCEDURE SP_EliminarProducto
+@IN_Id INT
+AS
+BEGIN
+	
+	DELETE FROM Productos
+	WHERE Id = @IN_Id
+
+END
