@@ -26,13 +26,19 @@ namespace GestionadorProductosBack.Controllers
         [Route("ConsultarProducto/{Nombre}")]
         public async Task<ActionResult<Productos>> ConsultarProducto(string Nombre)
         {
-            var producto = await _service.ConsultarProducto(Nombre);
-
-            if(producto == null)
-                return NotFound("No se encontró el producto");
-            else
-                return Ok(producto);
+            return Ok(await _service.ConsultarProducto(Nombre));
         }
+        //[HttpGet]
+        //[Route("ConsultarProducto/{Nombre}")]
+        //public async Task<ActionResult<Productos>> ConsultarProducto(string Nombre)
+        //{
+        //    var producto = await _service.ConsultarProducto(Nombre);
+
+        //    if(producto == null)
+        //        return NotFound("No se encontró el producto");
+        //    else
+        //        return Ok(producto);
+        //}
 
         [HttpPost]
         [Route("RegistrarProducto")]

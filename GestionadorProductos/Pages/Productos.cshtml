@@ -1,0 +1,132 @@
+﻿@page
+@model ProductosModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Gestión Completa de Productos";
+}
+
+<h1 class="mt-4">Gestión Completa de Productos</h1>
+
+<div class="container">
+    <!-- Buscar producto por nombre -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <form method="post" asp-page-handler="Buscar">
+                <div class="input-group">
+                    <input asp-for="NombreBusqueda" class="form-control" placeholder="Buscar producto por nombre" />
+                    <button class="btn btn-primary" type="submit">Buscar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Lista de productos -->
+    <div class="row">
+        <div class="col-md-8">
+            <h2>Lista de Productos</h2>
+            <table class="table table-bordered table-striped mt-3">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Id</th>
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th>Cantidad</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.ListaProductos != null && Model.ListaProductos.Count > 0)
+                    {
+                        foreach (var producto in Model.ListaProductos)
+                        {
+                            <tr>
+                                <td>@producto.Id</td>
+                                <td>@producto.Nombre</td>
+                                <td>@producto.Precio.ToString("C")</td>
+                                <td>@producto.Cantidad</td>
+                                <td>
+                                    <button class="btn btn-warning btn-sm" type="button" data-bs-toggle="modal" data-bs-target="#modalEditar" onclick="setProductoEditar('@producto.Id', '@producto.Nombre', '@producto.Precio', '@producto.Cantidad')">Editar</button>
+                                    <form method="post" asp-page-handler="Eliminar" class="d-inline">
+                                        <input type="hidden" name="id" value="@producto.Id" />
+                                        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center">No hay productos disponibles.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Formulario de nuevo producto -->
+        <div class="col-md-4">
+            <h2>Crear Nuevo Producto</h2>
+            <form method="post" asp-page-handler="Crear">
+                <div class="form-group mt-3">
+                    <label for="nombre">Nombre</label>
+                    <input asp-for="NuevoProducto.Nombre" class="form-control" id="nombre" required />
+                    <span asp-validation-for="NuevoProducto.Nombre" class="text-danger"></span>
+                </div>
+                <div class="form-group mt-3">
+                    <label for="precio">Precio</label>
+                    <input asp-for="NuevoProducto.Precio" class="form-control" id="precio" type="number" step="0.01" required />
+                    <span asp-validation-for="NuevoProducto.Precio" class="text-danger"></span>
+                </div>
+                <div class="form-group mt-3">
+                    <label for="cantidad">Cantidad</label>
+                    <input asp-for="NuevoProducto.Cantidad" class="form-control" id="cantidad" type="number" required />
+                    <span asp-validation-for="NuevoProducto.Cantidad" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-primary mt-3">Crear Producto</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para editar producto -->
+<div class="modal fade" id="modalEditar" tabindex="-1" aria-labelledby="modalEditarLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalEditarLabel">Editar Producto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" asp-page-handler="Modificar">
+                    <input asp-for="ProductoEditar.Id" type="hidden" />
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        <input asp-for="ProductoEditar.Nombre" class="form-control" required />
+                    </div>
+                    <div class="form-group mt-3">
+                        <label>Precio</label>
+                        <input asp-for="ProductoEditar.Precio" class="form-control" type="number" step="0.01" required />
+                    </div>
+                    <div class="form-group mt-3">
+                        <label>Cantidad</label>
+                        <input asp-for="ProductoEditar.Cantidad" class="form-control" type="number" required />
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-4">Guardar Cambios</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function setProductoEditar(id, nombre, precio, cantidad) {
+            document.getElementById("ProductoEditar_Id").value = id;
+            document.getElementById("ProductoEditar_Nombre").value = nombre;
+            document.getElementById("ProductoEditar_Precio").value = precio;
+            document.getElementById("ProductoEditar_Cantidad").value = cantidad;
+        }
+    </script>
+}

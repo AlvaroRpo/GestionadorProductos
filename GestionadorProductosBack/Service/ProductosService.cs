@@ -27,7 +27,7 @@ namespace GestionadorProductosBack.Service
             }
         }
 
-        public async Task<Productos> ConsultarProducto(string Nombre)
+        public async Task<List<Productos>> ConsultarProducto(string Nombre)
         {
             string query = "SP_ConsultarProducto";
             var Parametros = new DynamicParameters();
@@ -35,8 +35,9 @@ namespace GestionadorProductosBack.Service
 
             using (var con = new SqlConnection(cadenaSql))
             {
-                var producto = await con.QueryFirstOrDefaultAsync<Productos>(query, Parametros, commandType: CommandType.StoredProcedure);
-                return producto;
+                var producto = await con.QueryAsync<Productos>(query, Parametros, commandType: CommandType.StoredProcedure);
+                //var producto = await con.QueryFirstOrDefaultAsync<Productos>(query, Parametros, commandType: CommandType.StoredProcedure);
+                return producto.ToList();
             }
         }
 
